@@ -158,8 +158,8 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
     }
     aircraft_type = doc["response"]["aircraft"]["type"].as<String>();
 
-    if (airline_name.length() >= 10) {
-      airline_name = airline_name.substring(0,9) + ".";
+    if (airline_name.length() > 9) {
+      airline_name = airline_name.substring(0,8) + ".";
     }
 
     if (aircraft_type.length() >= 16) {
