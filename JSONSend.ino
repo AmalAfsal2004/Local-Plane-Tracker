@@ -1,7 +1,12 @@
+//LIBRARIES FOR OVER THE AIR UPDATES
+#include <Arduino.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <ElegantOTA.h>
+#include <WebSerial.h>
 
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <TinyGPSPlus.h>
 #include <ArduinoJson.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <Fonts/Picopixel.h>
@@ -9,21 +14,11 @@
 #include <local_info.h>
 
 
-// Now that wiring is fixed:
-#define RXD2 16  // GPS TX goes here
-#define TXD2 17  // GPS RX goes here
-#define GPS_BAUD 9600
-
 const char* ssid = SSID;
 const char* password = PASSWORD;
 
-
 unsigned long lastTime = 0;
-unsigned long timerDelay = 5000;
-
-HardwareSerial gpsSerial(2);
-TinyGPSPlus gps;
-
+unsigned long timerDelay = 10000;
 
 //----------------------------------------Defines the connected PIN between P3 and ESP32.
 #define R1_PIN 4
@@ -62,59 +57,25 @@ uint16_t myBLUE = dma_display->color565(3, 43, 196);
 uint16_t myYELLOW = dma_display->color565(252, 182, 0);
 //----------------------------------------
 
-
-void static_backround() {
-  //MAIN AIRCRAFT INFO BOX
-  dma_display->setFont(&TomThumb);
-  dma_display->setTextWrap(false);
-  dma_display->fillRect(2,2,60,23,myBLUE);
-
-  //DEPARTURE ARRIVAL
-  dma_display->fillRect(2,28,18,9,myBLUE);
-  dma_display->fillRect(44,28,18,9,myBLUE);
-
-  dma_display->setTextColor(myYELLOW);
-  dma_display->setCursor(4,35);
-  dma_display->print("DEP.");
-  dma_display->setCursor(46, 35);
-  dma_display->print("ARR.");
-
-  //ARROW
-  dma_display->drawLine(21, 32, 42, 32, myWHITE);
-  dma_display->drawLine(38,28,42,32,myWHITE);
-  dma_display->drawLine(38,36,42,32,myWHITE);
-
-  //ALTITUDE + DISTANCE TO US
-  dma_display->fillRect(2,46,18,9,myBLUE);
-  dma_display->fillRect(44,46,18,9,myBLUE);
-
-  dma_display->setCursor(4, 53);
-  dma_display->setTextColor(myYELLOW);
-  dma_display->print("ALT.");
-  dma_display->setCursor(46, 53);
-  dma_display->print("DIS.");
-}
-
+//For OTA serial monitor and sketch pushing
+AsyncWebServer server(80); 
 
 void setup() {
   Serial.begin(115200);
-  gpsSerial.begin(GPS_BAUD, SERIAL_8N1, RXD2, TXD2);
   delay(3000);  // Give time to open Serial Monitor
-  Serial.println("GPS Parser Started");
-
   
   WiFi.begin(ssid, password);
-  Serial.println("Connecting");
+  Serial_n_Webln("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial_n_Web(".");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+  Serial_n_Webln("");
+  Serial_n_Web("Connected to WiFi network with IP Address: ");
+  Serial_n_Webln(WiFi.localIP());
 
   //DISPLAY
-    HUB75_I2S_CFG::i2s_pins _pins={R1_PIN, G1_PIN, B1_PIN, R2_PIN, G2_PIN, B2_PIN, A_PIN, B_PIN, C_PIN, D_PIN, E_PIN, LAT_PIN, OE_PIN, CLK_PIN};
+  HUB75_I2S_CFG::i2s_pins _pins={R1_PIN, G1_PIN, B1_PIN, R2_PIN, G2_PIN, B2_PIN, A_PIN, B_PIN, C_PIN, D_PIN, E_PIN, LAT_PIN, OE_PIN, CLK_PIN};
   delay(10);
 
   //----------------------------------------Module configuration.
@@ -138,129 +99,60 @@ void setup() {
   //----------------------------------------
   
   dma_display->clearScreen();
-  
-  dma_display->fillScreen(myWHITE);
-  delay(1000);
-  dma_display->fillScreen(myRED);
-  delay(1000);
-  dma_display->fillScreen(myGREEN);
-  delay(1000);
-  dma_display->fillScreen(myBLUE);
-  delay(1000);
-  
-  dma_display->clearScreen();
   delay(1000);
 
-  static_backround();
+  static_background();
+
+  //MAX DISPLAY LENGTH FOR CARRIER NAME IS GOING TO BE 9
+
+ //===========================================================================
+ //Anthing below this line, until the end of the setup loop, is for OTA Functionality
+  WebSerial.begin(&server); //ONLINE SERIAL MONITOR
+  WebSerial.onMessage([&](uint8_t *data, size_t len) {
+    Serial.printf("Received %u bytes from WebSerial: ", len);
+    Serial.write(data, len);
+    Serial.println();
+    WebSerial.println("Received Data...");
+    String d = "";
+    for(size_t i=0; i < len; i++){
+      d += char(data[i]);
+    }
+    WebSerial.println(d);
+  });
+  WebSerial.setAuthentication(OTA_USR , OTA_PASS);
+
+  ElegantOTA.begin(&server);   
+  ElegantOTA.setAutoReboot(true);
+  ElegantOTA.setAuth(OTA_USR , OTA_PASS);
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", "Hi! I am ESP32.");
+  });
+
+  server.begin();
+  Serial_n_Webln("HTTP server started");
 
 }
 
 void loop() {
-  /*
-    * Reads incoming GPS DATA and parses it
-  */
-  const char* flight_carrier = nullptr;
-  const char* flight_number = nullptr;
-  const char* aircraft_type = nullptr;
-  const char* origin_airport = nullptr;
-  const char* destination_airport = nullptr;
-  int current_altitude_ft;
-  float distance_miles;
+
+  ElegantOTA.loop(); //OVER THE AIR UPDATE FUNCTIONALITY 
 
   if ((millis() - lastTime) > timerDelay) {
+    lastTime = millis();
     if (WiFi.status() == WL_CONNECTED) {
-      WiFiClient client;
-      HTTPClient http;
-          while (gpsSerial.available() > 0) {
-            gps.encode(gpsSerial.read());
-          }
-          if (gps.location.isUpdated()) { //Checks if new data is available
-            JsonDocument doc;
+      HTTPClient client_one; //For API ONE
+      HTTPClient client_two; //For API TWO;
+      client_one.begin(ADSB_API_ONE);
+      int httpCode_one = client_one.GET();
 
-            double latitude = gps.location.lat();
-            double longitude = gps.location.lng();
-            int rad = 30;
-
-            doc["lat"] = latitude;
-            doc["lon"] = longitude;
-            doc["rad"] = 30;
-
-            String output;
-
-            serializeJson(doc,output);
-            Serial.println(output);
-
-            http.begin(client,serverName);
-            http.addHeader("Content-Type", "application/json");
-
-            int httpResponseCode = http.POST(output);
-
-            Serial.print("HTTP Response Code: ");
-            Serial.println(httpResponseCode);
-            http.end();
-
-            if (httpResponseCode > 0) {
-                String response = http.getString();
-                Serial.print("Response from server: ");
-                Serial.println(response);  // Print server's response
-                DynamicJsonDocument doc(1024);
-                deserializeJson(doc,response);
-
-                if (doc["closest_flight"]["flight_carrier"] == "Private Owner") {
-                    flight_carrier = "Private";
-                }
-                else {
-                    flight_carrier = doc["closest_flight"]["flight_carrier"];
-                }
-                flight_number = doc["closest_flight"]["flight_number"];
-                aircraft_type = doc["closest_flight"]["aircraft_type"];
-                origin_airport = doc["closest_flight"]["origin_airport"];
-                destination_airport = doc["closest_flight"]["destination_airport"];
-                current_altitude_ft = doc["closest_flight"]["current_altitude_ft"];
-                distance_miles = doc["closest_flight"]["distance_miles"];
-
-                Serial.println(current_altitude_ft);
-                Serial.println(distance_miles);
-
-                dma_display->fillRect(2,2,60,23,myBLACK);
-                dma_display->fillRect(2,37,18,8,myBLACK);
-                dma_display->fillRect(44,37,18,8,myBLACK);
-                dma_display->fillRect(2,55,18,8,myBLACK);
-                dma_display->fillRect(44,55,18,8,myBLACK);
-        
-                dma_display->fillRect(2,2,60,23,myBLUE);
-                dma_display->setFont(NULL);
-                dma_display->setCursor(4, 3);
-                dma_display->setTextSize(1);
-                dma_display->setTextColor(myYELLOW);
-                dma_display->print(flight_carrier);
-                dma_display->setFont(&TomThumb); //VERT HAS OFFSET OF 5
-                dma_display->setCursor(4,17);
-                dma_display->print(flight_number);
-                dma_display->setCursor(4,24);
-                dma_display->print(aircraft_type);
-
-                dma_display->setTextColor(myWHITE);
-                dma_display->setCursor(5,44);
-                dma_display->print(origin_airport);
-                dma_display->setCursor(47, 44);
-                dma_display->print(destination_airport);
-
-                dma_display->setTextColor(myWHITE);
-                dma_display->setCursor(2, 62);
-                dma_display->print(current_altitude_ft);
-                dma_display->setCursor(46, 62);
-                dma_display->print(distance_miles);
-                d
-
-            } else {
-                Serial.println("Error in sending POST request");
-            }  
-          }
-          else {
-            Serial.println("WiFi Disconnected");
-          }
-          lastTime = millis();
+      if (httpCode_one > 0) {
+        get_api_one(client_one, client_two, httpCode_one);
+      }
+      else {
+        Serial_n_Webln("Could not GET from API 1!");
+        Serial_n_Webln(httpCode_one);
+      }
     }
   }
 
