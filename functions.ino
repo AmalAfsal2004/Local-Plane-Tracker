@@ -55,11 +55,15 @@ void get_api_one(HTTPClient &client_one, HTTPClient &client_two ,int httpCode){
   int alt_baro;
   float distance;
 
+  int total_aircraft;
+
   String payload = client_one.getString();
   DynamicJsonDocument doc(1536);
   deserializeJson(doc,payload);
 
-  if (doc["ac"].size() != 0) {
+  total_aircraft = doc["total"];
+
+  if (total_aircraft != 0) {
     callsign = doc["ac"][0]["flight"];
     aircraft_type = doc["ac"][0]["t"].as<String>();
     registration = doc["ac"][0]["r"];
@@ -149,14 +153,16 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
   DynamicJsonDocument doc(1536);
   deserializeJson(doc,payload);
 
-  if (doc["response"] != "unknown callsign") {
+  String response = doc["response"].as<String>();
+
+  if (response != "unknown aircraft") {
     if (doc["response"]["flightroute"]["airline"].size() == 0) {
-      airline_name = "Private";
+      airline_name = "Unknown!";
     }
     else {
       airline_name = doc["response"]["flightroute"]["airline"]["name"].as<String>();
+      aircraft_type = doc["response"]["aircraft"]["type"].as<String>();
     }
-    aircraft_type = doc["response"]["aircraft"]["type"].as<String>();
 
     if (airline_name.length() > 9) {
       airline_name = airline_name.substring(0,8) + ".";
@@ -167,6 +173,6 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
     }
   }
   else {
-    airline_name = "Private"; //Most likely the case
+    airline_name = "Unknown!"; //Most likely the case
   }
 }
