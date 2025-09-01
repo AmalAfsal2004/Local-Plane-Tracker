@@ -5,12 +5,15 @@
 #include <ElegantOTA.h>
 #include <WebSerial.h>
 
+//ESSENTIAL LIBRARIES
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <Fonts/Picopixel.h>
 #include <Fonts/TomThumb.h>
+
+//HEADER FILE THAT STORES YOUR PRIVATE INFO
 #include <local_info.h>
 
 
@@ -150,6 +153,15 @@ void loop() {
         get_api_one(client_one, client_two, httpCode_one);
       }
       else {
+        dma_display->clearScreen();
+        static_background();
+        dma_display->setTextColor(myWHITE);
+        dma_display->setTextSize(1);
+        dma_display->setFont(&TomThumb); //VERT HAS OFFSET OF 5
+        dma_display->setCursor(4,17);
+        dma_display->print("API Fetch Fail!");
+        dma_display->setCursor(4,24);
+        dma_display->print("Check WiFi!");        
         Serial_n_Webln("Could not GET from API 1!");
         Serial_n_Webln(httpCode_one);
       }
