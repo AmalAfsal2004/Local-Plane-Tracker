@@ -16,10 +16,15 @@
 //HEADER FILE THAT STORES YOUR PRIVATE INFO
 #include <local_info.h>
 
-
+//WiFi user and password
 const char* ssid = SSID;
 const char* password = PASSWORD;
 
+/*
+* Non-Blocking timer delay variables
+* Timer delay currently set to 10 seconds
+* As per the developers of the API, keep it to 1 request per second maximum
+*/
 unsigned long lastTime = 0;
 unsigned long timerDelay = 10000;
 
@@ -137,10 +142,16 @@ void setup() {
 
 }
 
+//Because ADSB_API_ONE has my personal coordinates, I put it in a non-included header file
+//The link to this API is below
+// "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
+// Plug in your latitude, longitute, and radius up to 250 miles
+
 void loop() {
 
   ElegantOTA.loop(); //OVER THE AIR UPDATE FUNCTIONALITY 
 
+  //Every 10 seconds, according to timer delay
   if ((millis() - lastTime) > timerDelay) {
     lastTime = millis();
     if (WiFi.status() == WL_CONNECTED) {
@@ -153,6 +164,7 @@ void loop() {
         get_api_one(client_one, client_two, httpCode_one);
       }
       else {
+        //If connecting to API 1 fails
         dma_display->clearScreen();
         static_background();
         dma_display->setTextColor(myWHITE);

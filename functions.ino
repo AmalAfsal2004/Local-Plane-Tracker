@@ -1,16 +1,19 @@
+/*
+* print() for both online and real life Serial Monitor
+*/
 
 void Serial_n_Webln(auto text) {
   Serial.println(text);
   WebSerial.println(text);
 }
-/*
-* print() for both online and real life Serial Monitor
-*/
+
 void Serial_n_Web(auto text) {
   Serial.print(text);
   WebSerial.print(text);
 }
 
+
+//Default background
 void static_background() {
   //MAIN AIRCRAFT INFO BOX
   dma_display->setFont(&TomThumb);
@@ -38,6 +41,15 @@ void static_background() {
   dma_display->print("DIS.");
 }
 
+/*
+* This API gets the closest aircraft's
+* callsign
+* registration
+* squawk/transponder code
+* gs (ground speed)
+* barometric altitude
+* Distance to coordinates
+*/
 void get_api_one(HTTPClient &client_one, HTTPClient &client_two ,int httpCode){
   String airline_name;
   const char* callsign = nullptr;
@@ -140,6 +152,12 @@ void get_api_one(HTTPClient &client_one, HTTPClient &client_two ,int httpCode){
   }
 }
 
+
+/*
+* Using API One, we plug in the aircrafts callsign and registration to get
+* Airline Name
+* Aircraft Type
+*/
 void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_type) {
 
   String payload = client_two.getString();
@@ -150,22 +168,28 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
 
   if (response != "unknown aircraft") {
     if (doc["response"]["flightroute"]["airline"].size() == 0) {
+      //The case in which the aircraft is under General Aviation
+      // (there will not be an aircraft name)
       airline_name = "Unknown!";
     }
     else {
+      //There is an airliner name
       airline_name = doc["response"]["flightroute"]["airline"]["name"].as<String>();
       aircraft_type = doc["response"]["aircraft"]["type"].as<String>();
     }
 
     if (airline_name.length() > 9) {
+      //Makes sure the airline name doesn't wrap around the screen
       airline_name = airline_name.substring(0,8) + ".";
     }
 
     if (aircraft_type.length() >= 16) {
-      airline_name = airline_name.substring(0,15) + ".";
+      //Makes sure aircraft_type doesn't wrap around the screen
+      aircraft_type = airline_name.substring(0,15) + ".";
     }
   }
   else {
-    airline_name = "Unknown!"; //Most likely the case
+    //The aircraft is not in API 2's database
+    airline_name = "Unknown!"; 
   }
 }
