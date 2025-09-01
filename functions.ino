@@ -27,13 +27,6 @@ void static_background() {
   dma_display->setCursor(46, 35);
   dma_display->print("SQK.");
 
-/*
-  //ARROW
-  dma_display->drawLine(21, 32, 42, 32, myWHITE);
-  dma_display->drawLine(38,28,42,32,myWHITE);
-  dma_display->drawLine(38,36,42,32,myWHITE);
-*/
-
   //ALTITUDE + DISTANCE TO US
   dma_display->fillRect(2,46,18,9,myBLUE);
   dma_display->fillRect(44,46,18,9,myBLUE);
