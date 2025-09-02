@@ -142,10 +142,11 @@ void setup() {
 
 }
 
-//Because ADSB_API_ONE has my personal coordinates, I put it in a non-included header file
+//Because ADSB_API_ONE has my personal coordinates, I put the String in a non-included header file
 //The link to this API is below
 // "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
-// Plug in your latitude, longitute, and radius up to 250 miles 
+// Plug in your latitude, longitute, and radius up to 250 miles, and then uncomment the code.
+// String ADSB_API_ONE = "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
 
 void loop() {
 
