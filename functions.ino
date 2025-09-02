@@ -185,7 +185,7 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
 
     if (aircraft_type.length() >= 16) {
       //Makes sure aircraft_type doesn't wrap around the screen
-      aircraft_type = airline_name.substring(0,15) + ".";
+      aircraft_type = aircraft_type.substring(0,15) + ".";
     }
   }
   else {
