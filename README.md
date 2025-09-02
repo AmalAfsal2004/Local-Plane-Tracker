@@ -51,8 +51,8 @@ The program should now work accordingly, and is ready to be displayed on a 64x64
 The non-essential libraries that I have used allow me to upload updates to the ESP32 over the air and utilize the Serial Monitor. If you noticed a lack of Serial.print() commands, it is because they have been replaced by my Serial_n_Web() commands. These commands print to the Serial Monitor, and also the Web Serial Monitor.
 
 ## More Pictures
-- No Planes, indicate that no plane are within the radius specified
-- Unknown, means that the plane either is not an airliner (General Aviation) or is not included in API 2's database
+- No Planes, indicate that no planes are within the radius specified
+- Unknown, means that the plane either is not part of an airline (General Aviation) or is not included in API 2's database
 <p align = "center">
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/no_plane.jpg?raw=true"/>
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/yang.jpg?raw=true"/>
