@@ -70,6 +70,11 @@ void get_api_one(HTTPClient &client_one, HTTPClient &client_two ,int httpCode){
 
   if (total_aircraft != 0) {
     callsign = doc["ac"][0]["flight"];
+    /*
+    * Expect aircraft_type to be overwritten by API 2
+    * In the case that this aircraft is not in API 2's database,
+    * the aircraft_type string will have a default value from API 1
+    */ 
     aircraft_type = doc["ac"][0]["t"].as<String>();
     registration = doc["ac"][0]["r"];
     squawk = doc["ac"][0]["squawk"];
