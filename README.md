@@ -9,9 +9,9 @@ Living under or near a busy flight corridor can lead to increasing curiosity. Wh
 - Breadboard (For the Power Supply Breadboard to connect to)
 - Jumper Cables, female to and female to male
 
-<div>
-<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/kor_air(1).jpg?raw=true" align = "center" />
-</div>
+<p align = "center">
+<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/kor_air(1).jpg?raw=true"/>
+</p>
 
 ## APIs
 This program utilizes two ADSB APIs: adsb.lol & adsbdb \
