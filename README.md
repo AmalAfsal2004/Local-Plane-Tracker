@@ -55,4 +55,5 @@ The non-essential libraries that I have used allow me to upload updates to the E
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/no_plane.jpg?raw=true"/>
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/yang.jpg?raw=true"/>
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/air_canada.jpg?raw=true"/>
+<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/C172.jpg?raw=true"/>
 </p>
