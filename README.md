@@ -32,3 +32,22 @@ Please go to lines 20 - 21 on JSONSend.ino. From here, you should see this code:
 const char* ssid = SSID;
 const char* password = PASSWORD;
 ```
+From here you can directly put in your WiFi username and password for your ESP32 to connect to the network
+
+### API ONE 
+Please go to lines 145 - 149 on JSONSend.ino. 
+```
+//Because ADSB_API_ONE has my personal coordinates, I put the String in a non-included header file
+//The link to this API is below
+// "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
+// Plug in your latitude, longitute, and radius up to 250 miles, and then uncomment the code.
+// String ADSB_API_ONE = "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
+```
+Where you see the "String ADSB_API_ONE", put down your latitude, longitude, and radius from user for the API to detect the closest plane. After this, un-comment the code.
+
+The program should now work accordingly, and is ready to be displayed on a 64x64 RGB Matrix.
+
+### (Optional) ElegantOTA and WebSerial
+The non-essential libraries that I have used allow me to upload updates to the ESP32 over the air and utilize the Serial Monitor. If you noticed a lack of Serial.print() commands, it is because they have been replaced by my Serial_n_Web() commands. These commands print to the Serial Monitor, and also the Web Serial Monitor.
+
+## More Pictures
