@@ -145,7 +145,7 @@ void setup() {
 //Because ADSB_API_ONE has my personal coordinates, I put it in a non-included header file
 //The link to this API is below
 // "https://api.adsb.lol/v2/closest/{lat}/{lon}/{radius}"
-// Plug in your latitude, longitute, and radius up to 250 miles
+// Plug in your latitude, longitute, and radius up to 250 miles 
 
 void loop() {
 
