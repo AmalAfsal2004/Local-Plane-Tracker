@@ -21,3 +21,14 @@ https://www.adsbdb.com/ \
 I decided to use two APIs because while adsb.lol returns information about plane registration, ground speed, transponder/squawk code, altitude, and distance to user, it lacks the airline name and descriptive information about the aircraft type (adsb.lol has aircraft type information but its been simplified quite a lot, ie: B738 vs 737-800). adsbdb has a working database of aircraft, but more specifically Airline Name and a descriptive plane type. By using the registration and callsign information from adsb.lol, I could plug it into the adsbdb API which returns me the airline name and aircraft type. 
 
 Disclaimer: I am by no means trying to diminish the value that these two ADSB data vendors provide, especially for freeware. I am simply trying to make the best out of both products to enhance my project.
+
+## Operations
+For this program to work WiFi is required. API One, or adsb.lol also requires a latitute, longitude, and a fixed radius (determined by you) to return the closest aircraft.\
+
+### WiFi Setup
+Please go to lines 20 - 21 on JSONSend.ino. From here, you should see this code:
+```
+//WiFi user and password
+const char* ssid = SSID;
+const char* password = PASSWORD;
+```
