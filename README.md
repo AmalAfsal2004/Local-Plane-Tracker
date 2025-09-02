@@ -8,3 +8,7 @@ Living under or near a busy flight corridor can lead to increasing curiosity. Wh
 - Power Supply Breadboard (Connect one of the power supplies to this, which then powers the ESP32)
 - Breadboard (For the Power Supply Breadboard to connect to)
 - Jumper Cables, female to and female to male
+
+<div>
+<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/kor_air(1).jpg?raw=true" allign = "left" />
+</div>
