@@ -55,7 +55,7 @@ The non-essential libraries that I have used allow me to upload updates to the E
 - Unknown, means that the plane either is not part of an airline (General Aviation) or is not included in API 2's database
 <p align = "center">
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/no_plane.jpg?raw=true"/>
-<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/yang.jpg?raw=true"/>
-<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/air_canada.jpg?raw=true"/>
+<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/Southwest.jpg?raw=true"/>
+<img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/delta_air.jpg?raw=true"/>
 <img src = "https://github.com/AmalAfsal2004/Local-Plane-Tracker/blob/main/images/C172.jpg?raw=true"/>
 </p>
