@@ -185,12 +185,19 @@ void get_api_two(HTTPClient &client_two, String &airline_name, String &aircraft_
 
     if (airline_name.length() > 9) {
       //Makes sure the airline name doesn't wrap around the screen
-      airline_name = airline_name.substring(0,8) + ".";
+      airline_name = airline_name.substring(0,8);
+      airline_name.concat(".");
+    }
+
+    if (aircraft_type.indexOf(' ') != -1) {
+      //Adds a dash between aircraft type and variant for readability
+      aircraft_type.replace(' ', '-');
     }
 
     if (aircraft_type.length() >= 16) {
       //Makes sure aircraft_type doesn't wrap around the screen
-      aircraft_type = aircraft_type.substring(0,15) + ".";
+      aircraft_type = aircraft_type.substring(0,15);
+      aircraft_type.concat(".");
     }
   }
   else {
